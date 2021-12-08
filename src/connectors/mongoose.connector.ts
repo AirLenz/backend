@@ -6,7 +6,7 @@ const mongoConfig: ConnectOptions = {
   useUnifiedTopology: true,
   useCreateIndex: true,
   autoIndex: true,
-  ssl: Environment.NODE_ENV === "production" ? true : false,
+  //ssl: Environment.NODE_ENV === "production" ? true : false,
   authSource: "admin",
   w: "majority",
 };
