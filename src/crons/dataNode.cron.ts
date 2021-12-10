@@ -5,6 +5,7 @@ import { DataNodeInterface } from "interfaces";
 import moment from "moment";
 import { DataNodeRepository } from "repositories";
 var MongoClient = require("mongodb").MongoClient;
+const createCsvWriter = require("csv-writer").createObjectCsvWriter;
 
 const axiosInstace = axios.create({
   baseURL: "https://linked-things-apis.eu-de.mybluemix.net/api",
@@ -41,6 +42,23 @@ const getSnapshotData = (params: ParamsInterface) => {
 // 	},
 // });
 
+const csvWriter = createCsvWriter({
+  // Output csv file name is geek_data
+  path: "nodeData.csv",
+  header: [
+    // Title of the columns (column_names)
+    { id: "created", title: "Created" },
+    { id: "levelId", title: "LevelID" },
+    { id: "name", title: "Name" },
+    { id: "deviceId", title: "DeviceID" },
+    { id: "reason", title: "Reason" },
+    { id: "value", title: "Value" },
+    { id: "lat", title: "lat" },
+    { id: "lng", title: "lng" },
+    { id: "status", title: "Status" },
+  ],
+});
+
 MongoClient.connect(Environment.MONGO_URI, function (err: any, db: any) {
   if (err) throw err;
   var dbo = db.db("AirLenz");
@@ -50,16 +68,16 @@ MongoClient.connect(Environment.MONGO_URI, function (err: any, db: any) {
       startDate: moment().add(5, "hours").subtract(1, "minute").toISOString(),
       endDate: moment().add(5, "hours").toISOString(),
     });
-
-    dbo
-      .collection("datanodes")
-      .insertMany(dataNodes, function (err: any, res: any) {
-        if (err) throw err;
-        console.log("Number of documents inserted: " + res.insertedCount);
-        db.close();
-      });
-
-    console.log(dataNodes);
+    csvWriter
+      .writeRecords(dataNodes)
+      .then(() => console.log("The CSV file was written successfully"));
+    // dbo
+    //   .collection("datanodes")
+    //   .insertMany(dataNodes, function (err: any, res: any) {
+    //     if (err) throw err;
+    //     console.log("Number of documents inserted: " + res.insertedCount);
+    //     db.close();
+    //   });
   }, 30000);
 });
 
