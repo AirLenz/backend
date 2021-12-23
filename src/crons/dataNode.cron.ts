@@ -6,7 +6,6 @@ import moment from "moment";
 import { DataNodeRepository } from "repositories";
 var MongoClient = require("mongodb").MongoClient;
 const createCsvWriter = require("csv-writer").createObjectCsvWriter;
-import file from "../regions.json";
 
 const axiosInstace = axios.create({
   baseURL: "https://linked-things-apis.eu-de.mybluemix.net/api",
@@ -63,11 +62,6 @@ const csvWriter = createCsvWriter({
 MongoClient.connect(Environment.MONGO_URI, function (err: any, db: any) {
   if (err) throw err;
   var dbo = db.db("AirLenz");
-
-  dbo.collection("regions").insertMany(file, function (err: any, res: any) {
-    if (err) throw err;
-    console.log("Regions imported");
-  });
 
   setInterval(async () => {
     const dataNodes = await getSnapshotData({
