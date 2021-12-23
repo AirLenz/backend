@@ -68,16 +68,13 @@ MongoClient.connect(Environment.MONGO_URI, function (err: any, db: any) {
       startDate: moment().add(5, "hours").subtract(1, "minute").toISOString(),
       endDate: moment().add(5, "hours").toISOString(),
     });
-    csvWriter
-      .writeRecords(dataNodes)
-      .then(() => console.log("The CSV file was written successfully"));
-    // dbo
-    //   .collection("datanodes")
-    //   .insertMany(dataNodes, function (err: any, res: any) {
-    //     if (err) throw err;
-    //     console.log("Number of documents inserted: " + res.insertedCount);
-    //     db.close();
-    //   });
+
+    dbo
+      .collection("datanodes")
+      .insertMany(dataNodes, function (err: any, res: any) {
+        if (err) throw err;
+        console.log("Number of documents inserted: " + res.insertedCount);
+      });
   }, 30000);
 });
 
